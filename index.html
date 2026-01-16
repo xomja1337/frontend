@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alar - Creative Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FFD700;
+            --black: #000000;
+            --white: #FFFFFF;
+            --gray: #1a1a1a;
+            --light-gray: #888;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            animation: grain 8s steps(10) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0) }
+            10% { transform: translate(-5%, -10%) }
+            20% { transform: translate(-15%, 5%) }
+            30% { transform: translate(7%, -25%) }
+            40% { transform: translate(-5%, 25%) }
+            50% { transform: translate(-15%, 10%) }
+            60% { transform: translate(15%, 0%) }
+            70% { transform: translate(0%, 15%) }
+            80% { transform: translate(3%, 35%) }
+            90% { transform: translate(-10%, 10%) }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -1px;
+        }
+
+        .menu-links {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .menu-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: opacity 0.3s;
+        }
+
+        .menu-links a:hover {
+            opacity: 0.5;
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 0 60px;
+            position: relative;
+        }
+
+        #hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(60px, 12vw, 180px);
+            font-weight: 800;
+            line-height: 0.9;
+            margin-bottom: 30px;
+            letter-spacing: -5px;
+            position: relative;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .line span {
+            display: inline-block;
+            transform: translateY(100%);
+            animation: slideUp 1s ease forwards;
+        }
+
+        .hero-title .line:nth-child(2) span {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            color: var(--primary);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: var(--light-gray);
+            animation: scrollDown 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollDown {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+        }
+
+        .floating-3d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .shape-3d {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            animation: float3d 20s infinite ease-in-out;
+        }
+
+        .shape-3d:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            transform-style: preserve-3d;
+            animation-delay: 0s;
+        }
+
+        .shape-3d:nth-child(2) {
+            top: 50%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        .shape-3d:nth-child(3) {
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float3d {
+            0%, 100% {
+                transform: translateY(0) rotateX(0deg) rotateY(0deg);
+            }
+            25% {
+                transform: translateY(-30px) rotateX(10deg) rotateY(10deg);
+            }
+            50% {
+                transform: translateY(0) rotateX(-10deg) rotateY(20deg);
+            }
+            75% {
+                transform: translateY(-20px) rotateX(10deg) rotateY(-10deg);
+            }
+        }
+
+        #about {
+            display: flex;
+            align-items: center;
+            padding: 150px 60px;
+        }
+
+        .about-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(40px, 6vw, 80px);
+            font-weight: 800;
+            margin-bottom: 40px;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .about-text p {
+            font-size: 20px;
+            line-height: 1.8;
+            color: var(--light-gray);
+            margin-bottom: 30px;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .stat {
+            border-top: 2px solid var(--primary);
+            padding-top: 20px;
+        }
+
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--light-gray);
+            letter-spacing: 1px;
+        }
+
+        .about-visual {
+            position: relative;
+            height: 600px;
+        }
+
+        .visual-card {
+            position: absolute;
+            background: var(--gray);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 40px;
+            transition: transform 0.3s ease;
+        }
+
+        .visual-card:nth-child(1) {
+            width: 300px;
+            height: 350px;
+            top: 0;
+            left: 0;
+            z-index: 3;
+        }
+
+        .visual-card:nth-child(2) {
+            width: 280px;
+            height: 320px;
+            top: 100px;
+            left: 100px;
+            z-index: 2;
+        }
+
+        .visual-card:nth-child(3) {
+            width: 320px;
+            height: 280px;
+            top: 200px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .visual-card:hover {
+            transform: translateY(-10px);
+            z-index: 10;
+        }
+
+        .card-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+
+        #skills {
+            padding: 200px 60px;
+        }
+
+        .skills-header {
+            text-align: center;
+            margin-bottom: 120px;
+        }
+
+        .skills-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(50px, 8vw, 120px);
+            font-weight: 800;
+            line-height: 0.9;
+            margin-bottom: 30px;
+            letter-spacing: -3px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2px;
+            background: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .skill-item {
+            background: var(--black);
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .skill-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            transition: left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 0;
+        }
+
+        .skill-item:hover::before {
+            left: 0;
+        }
+
+        .skill-item:hover .skill-content {
+            color: var(--black);
+        }
+
+        .skill-content {
+            position: relative;
+            z-index: 1;
+            transition: color 0.5s;
+        }
+
+        .skill-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .skill-item:hover .skill-number {
+            color: var(--black);
+        }
+
+        .skill-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .skill-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--light-gray);
+        }
+
+        .skill-item:hover .skill-desc {
+            color: var(--black);
+        }
+
+        .skill-level {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .level-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .level-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border: 1px solid var(--white);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .dot.filled {
+            background: var(--white);
+        }
+
+        .skill-item:hover .dot {
+            border-color: var(--black);
+        }
+
+        .skill-item:hover .dot.filled {
+            background: var(--black);
+        }
+
+        #contact {
+            padding: 200px 60px;
+        }
+
+        .contact-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .contact-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(50px, 10vw, 150px);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            margin-bottom: 30px;
+        }
+
+        .contact-subtext {
+            font-size: 20px;
+            color: var(--light-gray);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .contact-card {
+            background: var(--gray);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .contact-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: var(--primary);
+            transition: height 0.4s ease;
+            z-index: 0;
+        }
+
+        .contact-card:hover::after {
+            height: 100%;
+        }
+
+        .contact-card:hover .contact-card-content {
+            color: var(--black);
+        }
+
+        .contact-card-content {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s;
+        }
+
+        .contact-icon {
+            font-size: 60px;
+            margin-bottom: 30px;
+            transition: transform 0.4s;
+        }
+
+        .contact-card:hover .contact-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .contact-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            font-family: 'Space Mono', monospace;
+            font-size: 16px;
+            color: var(--light-gray);
+            margin-bottom: 30px;
+        }
+
+        .contact-card:hover .contact-info {
+            color: var(--black);
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--white);
+            transition: gap 0.3s;
+        }
+
+        .contact-card:hover .contact-link {
+            gap: 20px;
+            color: var(--black);
+        }
+
+        footer {
+            padding: 80px 60px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--light-gray);
+            letter-spacing: 1px;
+        }
+
+        .footer-year {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            z-index: 10000;
+            transition: width 0.1s;
+        }
+
+        @media (max-width: 1024px) {
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .about-visual {
+                height: 400px;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 0 30px;
+            }
+
+            nav {
+                padding: 20px 30px;
+            }
+
+            .menu-links {
+                gap: 25px;
+            }
+
+            .hero-title {
+                font-size: 60px;
+                letter-spacing: -2px;
+            }
+
+            #about, #skills, #contact {
+                padding: 100px 30px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .parallax-section {
+            position: relative;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="scroll-progress"></div>
+
+    <nav>
+        <div class="logo">ALAR</div>
+        <ul class="menu-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="hero">
+        <div class="floating-3d">
+            <div class="shape-3d"></div>
+            <div class="shape-3d"></div>
+            <div class="shape-3d"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <div class="line"><span>CREATIVE</span></div>
+                <div class="line"><span>DEVELOPER</span></div>
+            </h1>
+            <p class="hero-subtitle">ALAR VEERMETS/ 13 Y.O </p>
+        </div>
+        <div class="scroll-indicator">
+            <span>SCROLL DOWN</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <section id="about" class="parallax-section">
+        <div class="about-container">
+            <div class="about-text">
+                <h2>Building the future, one line at a time</h2>
+                <p>I am a young developer from Estonia who learn a lot of proggraming langues.</p>
+                <p>От фронтенда до бэкенда, от дизайна до кибербезопасности — я стремлюсь овладеть всем спектром современных технологий.</p>
+                <div class="about-stats">
+                    <div class="stat">
+                        <div class="stat-number">13</div>
+                        <div class="stat-label">ЛЕТ</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">ИДЕЙ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-visual">
+                <div class="visual-card">
+                    <div class="card-icon">💻</div>
+                    <div class="card-title">Development</div>
+                    <div class="card-desc">Создание современных веб-приложений с чистым кодом</div>
+                </div>
+                <div class="visual-card">
+                    <div class="card-icon">🎨</div>
+                    <div class="card-title">Design</div>
+                    <div class="card-desc">Проектирование интуитивных пользовательских интерфейсов</div>
+                </div>
+                <div class="visual-card">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-title">Security</div>
+                    <div class="card-desc">Защита данных и этичный хакинг</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="parallax-section">
+        <div class="skills-header">
+            <h2>EXPERTISE</h2>
+        </div>
+        <div class="skills-grid">
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">01</div>
+                    <div class="skill-name">HTML</div>
+                    <div class="skill-desc">Семантическая разметка и современные веб-стандарты для создания доступных интерфейсов</div>
+                    <div class="skill-level">
+                        <div class="level-label">good</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">02</div>
+                    <div class="skill-name">CSS</div>
+                    <div class="skill-desc">Адаптивный дизайн, анимации, Grid и Flexbox для создания визуальных шедевров</div>
+                    <div class="skill-level">
+                        <div class="level-label">good</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">03</div>
+                    <div class="skill-name">JavaScript</div>
+                    <div class="skill-desc">Only start learning javascript </div>
+                    <div class="skill-level">
+                        <div class="level-label">starter</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">04</div>
+                    <div class="skill-name">Python</div>
+                    <div class="skill-desc">just easy scripts and still learning </div>
+                    <div class="skill-level">
+                        <div class="level-label">starter</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">05</div>
+                    <div class="skill-name">Git</div>
+                    <div class="skill-desc">teacher from algoricthm teach me , idk i dont study it </div>
+                    <div class="skill-level">
+                        <div class="level-label">Senior</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">06</div>
+                    <div class="skill-name">Bash</div>
+                    <div class="skill-desc">still learning bash and want to dowlnoaud kali linux </div>
+                    <div class="skill-level">
+                        <div class="level-label">starter</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">07</div>
+                    <div class="skill-name">Design</div>
+                    <div class="skill-desc">Do design by myself and AI nt claude</div>
+                    <div class="skill-level">
+                        <div class="level-label">eblan</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-item">
+                <div class="skill-content">
+                    <div class="skill-number">08</div>
+                    <div class="skill-name">Cyber Security</div>
+                    <div class="skill-desc">nothing.</div>
+                    <div class="skill-level">
+                        <div class="level-label">starter</div>
+                        <div class="level-dots">
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot filled"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
